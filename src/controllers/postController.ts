@@ -13,11 +13,12 @@ export const getUserPosts = async (req: Request, res: Response) => {
     }
 };
 
-export const createPost = async (req: Request, res: Response) => {
+export const createPost = async (req: Request, res: Response): Promise<void>  => {
     const { error, value } = postSchema.validate(req.body);
 
     if (error) {
-        return res.status(400).json({ message: 'Validation error', error: error.details });
+     res.status(400).json({ message: 'Validation error', error: error.details });
+     return;
     }
 
     try {
@@ -28,14 +29,15 @@ export const createPost = async (req: Request, res: Response) => {
     }
 };
 
-export const deletePost = async (req: Request, res: Response) => {
+export const deletePost = async (req: Request, res: Response): Promise<void>  => {
     const { id } = req.params;
 
     try {
         const post = await Post.findByPk(id);
 
         if (!post) {
-            return res.status(404).json({ message: 'Post not found' });
+         res.status(404).json({ message: 'Post not found' });
+         return;
         }
 
         await post.destroy();

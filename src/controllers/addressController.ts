@@ -3,27 +3,30 @@ import { addressSchema } from '../utils/utils';
 import Address from '../models/addressModel';
 
 // GET /addresses/:userId
-export const getAddressByUserId = async (req: Request, res: Response) => {
+export const getAddressByUserId = async (req: Request, res: Response): Promise<void>  => {
     const { userId } = req.params;
 
     const address = await Address.findOne({ where: { userId } });
     if (!address) {
-        return res.status(404).json({ message: 'Address not found for user' });
+     res.status(404).json({ message: 'Address not found for user' });
+     return;
     }
 
     res.json(address);
 };
 
 // POST /addresses - Create new address
-export const createAddress = async (req: Request, res: Response) => {
+export const createAddress = async (req: Request, res: Response): Promise<void>  => {
     const { error } = addressSchema.validate(req.body);
     if (error) {
-        return res.status(400).json({ message: error.details[0].message });
+     res.status(400).json({ message: error.details[0].message });
+     return;
     }
 
     const existingAddress = await Address.findOne({ where: { userId: req.body.userId } });
     if (existingAddress) {
-        return res.status(400).json({ message: 'User already has an address' });
+     res.status(400).json({ message: 'User already has an address' });
+     return;
     }
 
     const address = await Address.create(req.body);
@@ -31,12 +34,13 @@ export const createAddress = async (req: Request, res: Response) => {
 };
 
 // PATCH /addresses/:userId - Update address
-export const updateAddress = async (req: Request, res: Response) => {
+export const updateAddress = async (req: Request, res: Response): Promise<void>  => {
     const { userId } = req.params;
 
     const address = await Address.findOne({ where: { userId } });
     if (!address) {
-        return res.status(404).json({ message: 'Address not found for user' });
+     res.status(404).json({ message: 'Address not found for user' });
+     return;
     }
 
     await address.update(req.body);

@@ -29,7 +29,8 @@ exports.getUserPosts = getUserPosts;
 const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { error, value } = utils_1.postSchema.validate(req.body);
     if (error) {
-        return res.status(400).json({ message: 'Validation error', error: error.details });
+        res.status(400).json({ message: 'Validation error', error: error.details });
+        return;
     }
     try {
         const newPost = yield postModel_1.default.create(value);
@@ -45,7 +46,8 @@ const deletePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const post = yield postModel_1.default.findByPk(id);
         if (!post) {
-            return res.status(404).json({ message: 'Post not found' });
+            res.status(404).json({ message: 'Post not found' });
+            return;
         }
         yield post.destroy();
         res.status(200).json({ message: 'Post deleted successfully' });

@@ -28,7 +28,7 @@ export const getUserCount = async (req: Request, res: Response) => {
     }
 };
 
-export const getUserById = async (req: Request, res: Response) => {
+export const getUserById = async (req: Request, res: Response): Promise<void>  => {
     const { id } = req.params;
 
     try {
@@ -37,7 +37,8 @@ export const getUserById = async (req: Request, res: Response) => {
         });
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+             res.status(404).json({ message: 'User not found' });
+             return;
         }
 
         res.json(user);
@@ -46,11 +47,12 @@ export const getUserById = async (req: Request, res: Response) => {
     }
 };
 
-export const createUser = async (req: Request, res: Response) => {
+export const createUser = async (req: Request, res: Response): Promise<void>  => {
     const { error, value } = userSchema.validate(req.body);
 
     if (error) {
-        return res.status(400).json({ message: 'Validation error', error: error.details });
+         res.status(400).json({ message: 'Validation error', error: error.details });
+         return;
     }
 
     try {

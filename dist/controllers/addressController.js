@@ -20,7 +20,8 @@ const getAddressByUserId = (req, res) => __awaiter(void 0, void 0, void 0, funct
     const { userId } = req.params;
     const address = yield addressModel_1.default.findOne({ where: { userId } });
     if (!address) {
-        return res.status(404).json({ message: 'Address not found for user' });
+        res.status(404).json({ message: 'Address not found for user' });
+        return;
     }
     res.json(address);
 });
@@ -29,11 +30,13 @@ exports.getAddressByUserId = getAddressByUserId;
 const createAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { error } = utils_1.addressSchema.validate(req.body);
     if (error) {
-        return res.status(400).json({ message: error.details[0].message });
+        res.status(400).json({ message: error.details[0].message });
+        return;
     }
     const existingAddress = yield addressModel_1.default.findOne({ where: { userId: req.body.userId } });
     if (existingAddress) {
-        return res.status(400).json({ message: 'User already has an address' });
+        res.status(400).json({ message: 'User already has an address' });
+        return;
     }
     const address = yield addressModel_1.default.create(req.body);
     res.status(201).json(address);
@@ -44,7 +47,8 @@ const updateAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const { userId } = req.params;
     const address = yield addressModel_1.default.findOne({ where: { userId } });
     if (!address) {
-        return res.status(404).json({ message: 'Address not found for user' });
+        res.status(404).json({ message: 'Address not found for user' });
+        return;
     }
     yield address.update(req.body);
     res.json(address);

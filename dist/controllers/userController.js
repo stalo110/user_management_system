@@ -48,7 +48,8 @@ const getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             include: [{ model: addressModel_1.default }]
         });
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            res.status(404).json({ message: 'User not found' });
+            return;
         }
         res.json(user);
     }
@@ -60,7 +61,8 @@ exports.getUserById = getUserById;
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { error, value } = utils_1.userSchema.validate(req.body);
     if (error) {
-        return res.status(400).json({ message: 'Validation error', error: error.details });
+        res.status(400).json({ message: 'Validation error', error: error.details });
+        return;
     }
     try {
         const newUser = yield userModel_1.default.create(value);
