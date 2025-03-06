@@ -46,7 +46,10 @@ app.use(limiter);
 app.use((err, req, res, next) => {
     console.error(err);
     const status = err.status || 500;
-    const response = Object.assign({ message: err.message }, (process.env.NODE_ENV === "development" && { stack: err.stack }));
+    const response = {
+        message: err.message,
+        ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
+    };
     res.status(status).json(response);
 });
 app.use((req, res, next) => {
