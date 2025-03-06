@@ -1,8 +1,8 @@
-import { Router } from 'express';
+import express from 'express';
 import { getUserPosts, createPost, deletePost } from '../controllers/postController';
 import auth from "../library/middlewares/auth"
 
-const router = Router();
+const router = express.Router();
 
 router.get('/', auth, getUserPosts);
 router.post('/', auth, createPost);

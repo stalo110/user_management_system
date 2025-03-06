@@ -1,8 +1,8 @@
-import { Router } from 'express';
+import express from 'express';
 import { getUsers, getUserCount, getUserById, createUser } from '../controllers/userController';
 import auth from "../library/middlewares/auth"
 
-const router = Router();
+const router = express.Router();
 
 router.get('/', auth, getUsers);
 router.get('/count', auth, getUserCount);
