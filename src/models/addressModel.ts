@@ -18,7 +18,5 @@ Address.init({
     city: { type: DataTypes.STRING, allowNull: false },
 }, { sequelize:db, modelName: 'Address' });
 
-Address.belongsTo(User, { foreignKey: 'userId' });
-User.hasOne(Address, { foreignKey: 'userId' });
 
 export default Address;

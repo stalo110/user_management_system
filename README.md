@@ -5,6 +5,7 @@ This project is a **REST API** that manages **Users**, their **Posts**, and thei
 - **Sequelize ORM** for database interaction.
 - **SQLite** for local data storage.
 - **TypeScript** for type safety.
+- **Jest and Supertest** for unit testing.
 
 ---
 

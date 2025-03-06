@@ -12,10 +12,11 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const helmet_1 = __importDefault(require("helmet"));
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const database_config_1 = __importDefault(require("./config/database.config"));
+const models_1 = require("./models");
 const dotenv_1 = __importDefault(require("dotenv"));
-// import AdminRouter from "./routes/adminRoutes";
-// import EventRouter from "./routes/eventsRoutes";
-// import GuestRouter from "./routes/guestRoutes";
+const userRoute_1 = __importDefault(require("./routes/userRoute"));
+const postRoute_1 = __importDefault(require("./routes/postRoute"));
+const addressRoute_1 = __importDefault(require("./routes/addressRoute"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const corsOptions = {
@@ -33,9 +34,9 @@ app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
 app.use((0, morgan_1.default)("dev"));
-// app.use("/admin", AdminRouter);
-// app.use("/events", EventRouter);
-// app.use("/guest", GuestRouter);
+app.use("/user", userRoute_1.default);
+app.use("/post", postRoute_1.default);
+app.use("/address", addressRoute_1.default);
 app.use((0, helmet_1.default)());
 const limiter = (0, express_rate_limit_1.default)({
     windowMs: 5 * 60 * 1000,
@@ -53,8 +54,9 @@ app.use((req, res, next) => {
     next((0, http_errors_1.default)(404, "Not Found"));
 });
 // db connection
-database_config_1.default.sync().then(() => {
+database_config_1.default.sync({ force: false }).then(() => {
     console.log("Database Connected Successfully");
+    (0, models_1.setupAssociations)();
 }).catch((err) => {
     console.log("Error Connecting to Dtabase", err);
 });

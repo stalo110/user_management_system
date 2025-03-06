@@ -7,10 +7,11 @@ import bodyParser from "body-parser";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import db from "./config/database.config";
+import { setupAssociations } from './models';
 import dotenv from "dotenv";
-// import AdminRouter from "./routes/adminRoutes";
-// import EventRouter from "./routes/eventsRoutes";
-// import GuestRouter from "./routes/guestRoutes";
+import UserRouter from "./routes/userRoute";
+import PostRouter from "./routes/postRoute";
+import AddressRouter from "./routes/addressRoute";
 
 dotenv.config();
 const app = express();
@@ -32,9 +33,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(logger("dev"));
 
-// app.use("/admin", AdminRouter);
-// app.use("/events", EventRouter);
-// app.use("/guest", GuestRouter);
+app.use("/user", UserRouter);
+app.use("/post", PostRouter);
+app.use("/address", AddressRouter);
 
 app.use(helmet());
 
@@ -66,8 +67,9 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 
 // db connection
-db.sync().then(()=>{
+db.sync({ force: false }).then(()=>{
     console.log("Database Connected Successfully")
+    setupAssociations();
 }).catch((err)=>{
     console.log("Error Connecting to Dtabase", err)
 })

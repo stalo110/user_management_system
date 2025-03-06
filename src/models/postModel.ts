@@ -19,8 +19,6 @@ Post.init({
     title: { type: DataTypes.STRING, allowNull: false },
     body: { type: DataTypes.TEXT, allowNull: false },
 }, { sequelize:db, modelName: 'Post' });
-
-Post.belongsTo(User, { foreignKey: 'userId' });
-User.hasMany(Post, { foreignKey: 'userId' });
+                                                                                                                                                                                                                                                                                             
 
 export default Post;
