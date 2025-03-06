@@ -1,11 +1,11 @@
-# User Post Address API
+# User Management API
 
 This project is a **REST API** that manages **Users**, their **Posts**, and their **Addresses**. It is built using:
 - **Node.js** & **Express.js** for the backend.
 - **Sequelize ORM** for database interaction.
 - **SQLite** for local data storage.
 - **TypeScript** for type safety.
-- **Jest and Supertest** for unit testing.
+- **Jest** for unit testing.
 
 ---
 
@@ -39,17 +39,18 @@ This project is a **REST API** that manages **Users**, their **Posts**, and thei
 │   └── addressRoutes.ts
 │
 ├── utils/
-│   └── utils.
+│   └── utils.ts
 |
-├── library/                   
-│   └── middlewares/
-│       └── auth.ts|
+├── test/                   
+│   ├── userController.test.ts
+│   ├── postController.test.ts
+│   └── addressController.test.ts
 │
 ├── config/
 │   └── database.config.ts
 │
-├── app.ts
-├── server.ts
+├── index.ts.ts
+
 
 ---
 
@@ -57,14 +58,14 @@ This project is a **REST API** that manages **Users**, their **Posts**, and thei
 
 1. Clone the repository
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/stalo110/user_management_system
    cd user-post-address-api
 
 ## Install Dependency
 npm install
 
 ## Configure .env
-NODE_ENV=production
+NODE_ENV=development
 PORT=4000
 JWT_SECRET= fagaggaaga*******ghhhh
 
