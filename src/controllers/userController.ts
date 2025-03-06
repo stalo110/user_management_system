@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
-import { userSchema } from '../utils/utils';
+import { userSchema, option } from '../utils/utils';
 import User from '../models/userModel';
 import Address from '../models/addressModel';
+import { v4 as uuidv4 } from "uuid"
 
 export const getUsers = async (req: Request, res: Response) => {
     const pageNumber = parseInt(req.query.pageNumber as string) || 0;
@@ -13,7 +14,7 @@ export const getUsers = async (req: Request, res: Response) => {
             limit: pageSize
         });
 
-        res.json({ total: count, users: rows });
+        res.json({ msg: "Fetch successful", total: count, users: rows });
     } catch (err) {
         res.status(500).json({ message: 'Failed to fetch users', error: err });
     }
@@ -22,7 +23,7 @@ export const getUsers = async (req: Request, res: Response) => {
 export const getUserCount = async (req: Request, res: Response) => {
     try {
         const count = await User.count();
-        res.json({ total: count });
+        res.json({ msg: "User count Successful", total: count });
     } catch (err) {
         res.status(500).json({ message: 'Failed to fetch user count', error: err });
     }
@@ -41,23 +42,28 @@ export const getUserById = async (req: Request, res: Response): Promise<void>  =
              return;
         }
 
-        res.json(user);
+        res.json({msg: "User fetched successfully", user});
     } catch (err) {
         res.status(500).json({ message: 'Failed to fetch user', error: err });
     }
 };
 
 export const createUser = async (req: Request, res: Response): Promise<void>  => {
-    const { error, value } = userSchema.validate(req.body);
-
-    if (error) {
-         res.status(400).json({ message: 'Validation error', error: error.details });
-         return;
-    }
-
     try {
-        const newUser = await User.create(value);
-        res.status(201).json(newUser);
+        const { name, email } = req.body;
+        const iduuid = uuidv4();
+    
+        const validateResult = userSchema.validate(req.body, option);
+        if(validateResult.error){
+            res.status(400).json({Error: validateResult.error.details[0].message})
+        }
+
+        const newUser = await User.create({
+            id: iduuid,
+            name,
+            email
+        });
+        res.status(201).json({msg: "User created successfully", newUser});
     } catch (err) {
         res.status(500).json({ message: 'Failed to create user', error: err });
     }

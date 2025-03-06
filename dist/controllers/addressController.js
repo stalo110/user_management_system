@@ -6,42 +6,64 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateAddress = exports.createAddress = exports.getAddressByUserId = void 0;
 const utils_1 = require("../utils/utils");
 const addressModel_1 = __importDefault(require("../models/addressModel"));
+const uuid_1 = require("uuid");
 // GET /addresses/:userId
 const getAddressByUserId = async (req, res) => {
     const { userId } = req.params;
-    const address = await addressModel_1.default.findOne({ where: { userId } });
-    if (!address) {
-        res.status(404).json({ message: 'Address not found for user' });
-        return;
+    try {
+        const address = await addressModel_1.default.findOne({ where: { userId } });
+        if (!address) {
+            res.status(404).json({ message: 'Address not found for user' });
+            return;
+        }
+        res.json({ msg: "Successfully found User address", address });
     }
-    res.json(address);
+    catch (error) {
+        res.status(500).json({ message: 'Failed to fetch Address', error: error });
+    }
 };
 exports.getAddressByUserId = getAddressByUserId;
 // POST /addresses - Create new address
 const createAddress = async (req, res) => {
-    const { error } = utils_1.addressSchema.validate(req.body);
-    if (error) {
-        res.status(400).json({ message: error.details[0].message });
-        return;
+    const { userId, street, city } = req.body;
+    try {
+        const iduuid = (0, uuid_1.v4)();
+        const validateResult = utils_1.addressSchema.validate(req.body, utils_1.option);
+        if (validateResult.error) {
+            res.status(400).json({ Error: validateResult.error.details[0].message });
+        }
+        const existingAddress = await addressModel_1.default.findOne({ where: { userId: req.body.userId } });
+        if (existingAddress) {
+            res.status(400).json({ message: 'User already has an address' });
+            return;
+        }
+        const address = await addressModel_1.default.create({
+            id: iduuid,
+            userId,
+            street,
+            city
+        });
+        res.status(201).json({ msg: "Address creation for user successful", address });
     }
-    const existingAddress = await addressModel_1.default.findOne({ where: { userId: req.body.userId } });
-    if (existingAddress) {
-        res.status(400).json({ message: 'User already has an address' });
-        return;
+    catch (error) {
+        res.status(500).json({ message: 'Failed to create Address', error: error });
     }
-    const address = await addressModel_1.default.create(req.body);
-    res.status(201).json(address);
 };
 exports.createAddress = createAddress;
 // PATCH /addresses/:userId - Update address
 const updateAddress = async (req, res) => {
     const { userId } = req.params;
-    const address = await addressModel_1.default.findOne({ where: { userId } });
-    if (!address) {
-        res.status(404).json({ message: 'Address not found for user' });
-        return;
+    try {
+        const address = await addressModel_1.default.findOne({ where: { userId } });
+        if (!address) {
+            res.status(404).json({ message: 'Address not found for user' });
+            return;
+        }
+        await address.update(req.body);
+        res.json(address);
     }
-    await address.update(req.body);
-    res.json(address);
+    catch (error) {
+        res.status(500).json({ message: 'Failed to update Address', error: error });
+    }
 };
 exports.updateAddress = updateAddress;

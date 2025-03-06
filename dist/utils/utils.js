@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postSchema = exports.addressSchema = exports.userSchema = void 0;
+exports.option = exports.postSchema = exports.addressSchema = exports.userSchema = void 0;
 const joi_1 = __importDefault(require("joi"));
 exports.userSchema = joi_1.default.object({
     name: joi_1.default.string().required(),
@@ -19,3 +19,11 @@ exports.postSchema = joi_1.default.object({
     title: joi_1.default.string().required(),
     body: joi_1.default.string().required()
 });
+exports.option = {
+    abortearly: false,
+    errors: {
+        wrap: {
+            label: "",
+        }
+    }
+};

@@ -6,10 +6,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deletePost = exports.createPost = exports.getUserPosts = void 0;
 const utils_1 = require("../utils/utils");
 const postModel_1 = __importDefault(require("../models/postModel"));
+const uuid_1 = require("uuid");
 const getUserPosts = async (req, res) => {
-    const { userId } = req.query;
+    const { userId } = req.params;
+    if (!userId) {
+        res.status(400).json({ error: "Invalid User ID" });
+        return;
+    }
     try {
-        const posts = await postModel_1.default.findAll();
+        const posts = await postModel_1.default.findAll({
+            where: { userId }
+        });
+        if (posts.length == 0) {
+            res.status(400).json({ error: "No posts found for this user" });
+        }
         res.json(posts);
     }
     catch (err) {
@@ -18,14 +28,20 @@ const getUserPosts = async (req, res) => {
 };
 exports.getUserPosts = getUserPosts;
 const createPost = async (req, res) => {
-    const { error, value } = utils_1.postSchema.validate(req.body);
-    if (error) {
-        res.status(400).json({ message: 'Validation error', error: error.details });
-        return;
-    }
     try {
-        const newPost = await postModel_1.default.create(value);
-        res.status(201).json(newPost);
+        const { userId, title, body } = req.body;
+        const iduuid = (0, uuid_1.v4)();
+        const validateResult = utils_1.postSchema.validate(req.body, utils_1.option);
+        if (validateResult.error) {
+            res.status(400).json({ Error: validateResult.error.details[0].message });
+        }
+        const newPost = await postModel_1.default.create({
+            id: iduuid,
+            userId,
+            title,
+            body
+        });
+        res.status(201).json({ msg: "Post created successfully", newPost });
     }
     catch (err) {
         res.status(500).json({ message: 'Failed to create post', error: err });

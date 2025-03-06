@@ -7,6 +7,7 @@ exports.createUser = exports.getUserById = exports.getUserCount = exports.getUse
 const utils_1 = require("../utils/utils");
 const userModel_1 = __importDefault(require("../models/userModel"));
 const addressModel_1 = __importDefault(require("../models/addressModel"));
+const uuid_1 = require("uuid");
 const getUsers = async (req, res) => {
     const pageNumber = parseInt(req.query.pageNumber) || 0;
     const pageSize = parseInt(req.query.pageSize) || 10;
@@ -15,7 +16,7 @@ const getUsers = async (req, res) => {
             offset: pageNumber * pageSize,
             limit: pageSize
         });
-        res.json({ total: count, users: rows });
+        res.json({ msg: "Fetch successful", total: count, users: rows });
     }
     catch (err) {
         res.status(500).json({ message: 'Failed to fetch users', error: err });
@@ -25,7 +26,7 @@ exports.getUsers = getUsers;
 const getUserCount = async (req, res) => {
     try {
         const count = await userModel_1.default.count();
-        res.json({ total: count });
+        res.json({ msg: "User count Successful", total: count });
     }
     catch (err) {
         res.status(500).json({ message: 'Failed to fetch user count', error: err });
@@ -42,7 +43,7 @@ const getUserById = async (req, res) => {
             res.status(404).json({ message: 'User not found' });
             return;
         }
-        res.json(user);
+        res.json({ msg: "User fetched successfully", user });
     }
     catch (err) {
         res.status(500).json({ message: 'Failed to fetch user', error: err });
@@ -50,14 +51,19 @@ const getUserById = async (req, res) => {
 };
 exports.getUserById = getUserById;
 const createUser = async (req, res) => {
-    const { error, value } = utils_1.userSchema.validate(req.body);
-    if (error) {
-        res.status(400).json({ message: 'Validation error', error: error.details });
-        return;
-    }
     try {
-        const newUser = await userModel_1.default.create(value);
-        res.status(201).json(newUser);
+        const { name, email } = req.body;
+        const iduuid = (0, uuid_1.v4)();
+        const validateResult = utils_1.userSchema.validate(req.body, utils_1.option);
+        if (validateResult.error) {
+            res.status(400).json({ Error: validateResult.error.details[0].message });
+        }
+        const newUser = await userModel_1.default.create({
+            id: iduuid,
+            name,
+            email
+        });
+        res.status(201).json({ msg: "User created successfully", newUser });
     }
     catch (err) {
         res.status(500).json({ message: 'Failed to create user', error: err });

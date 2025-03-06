@@ -1,3 +1,4 @@
+import { error } from 'console';
 import Joi from 'joi';
 
 export const userSchema = Joi.object({
@@ -18,3 +19,13 @@ export const postSchema = Joi.object({
     title: Joi.string().required(),
     body: Joi.string().required()
 });
+
+
+export const option = {
+    abortearly: false,
+    errors: {
+        wrap: {
+            label: "",
+        }
+    }
+};

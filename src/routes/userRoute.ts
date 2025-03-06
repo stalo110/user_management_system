@@ -4,9 +4,9 @@ import auth from "../library/middlewares/auth"
 
 const router = express.Router();
 
-router.get('/', auth, getUsers);
-router.get('/count', auth, getUserCount);
-router.get('/:id', auth, getUserById);
+router.get('/', getUsers);
+router.get('/count', getUserCount);
+router.get('/:id', getUserById);
 router.post('/', createUser);
 
 export default router;
