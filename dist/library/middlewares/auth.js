@@ -19,21 +19,24 @@ const auth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const authorization = req.headers.authorization;
         if (!authorization) {
-            return res.status(401).json({ message: "Kindly sign in as a user" });
+            res.status(401).json({ message: "Kindly sign in as a user" });
+            return;
         }
         const token = authorization.slice(7, authorization.length);
         let verify = jsonwebtoken_1.default.verify(token, jwtsecret);
         if (!verify) {
-            return res.status(400).json({
+            res.status(400).json({
                 message: "Invalid token",
             });
+            return;
         }
         const { id } = verify;
         const user = yield userModel_1.default.findOne({ where: { id } });
         if (!user) {
-            return res.status(400).json({
+            res.status(400).json({
                 message: "Unauthorized!, kindly sign in as a user",
             });
+            return;
         }
         req.user = verify;
         next();
