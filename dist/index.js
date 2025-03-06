@@ -68,7 +68,7 @@ const PORT = process.env.PORT || 4000;
 const startServer = async () => {
     try {
         (0, models_1.setupAssociations)();
-        await database_config_1.default.sync({ force: true });
+        await database_config_1.default.sync({ force: false });
         console.log("Database Connected Successfully");
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);

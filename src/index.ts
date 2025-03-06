@@ -80,7 +80,7 @@ const PORT = process.env.PORT || 4000;
 const startServer = async () => {
     try {
         setupAssociations();  
-        await db.sync({ force: true }); 
+        await db.sync({ force: false }); 
         console.log("Database Connected Successfully");
 
         app.listen(PORT, () =>{
