@@ -20,7 +20,7 @@ export const getUserPosts = async (req: Request, res: Response) => {
         if(posts.length == 0){
          res.status(400).json({error: "No posts found for this user"})
         }
-        res.json(posts);
+        res.json({msg: "Successfully fetched user posts", posts});
     } catch (err) {
         res.status(500).json({ message: 'Failed to fetch posts', error: err });
     }
@@ -44,8 +44,9 @@ export const createPost = async (req: Request, res: Response): Promise<void>  =>
             body
         });
         res.status(201).json({msg: "Post created successfully", newPost});
-    } catch (err) {
-        res.status(500).json({ message: 'Failed to create post', error: err });
+    } catch (err:any) {
+        console.error('Error creating post:', err);  // Add this
+    res.status(500).json({ message: 'Failed to create post', error: err.message });
     }
 };
 

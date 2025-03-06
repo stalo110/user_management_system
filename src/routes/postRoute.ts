@@ -3,7 +3,7 @@ import { getUserPosts, createPost, deletePost } from '../controllers/postControl
 
 const router = express.Router();
 
-router.get('/', getUserPosts);
+router.get('/:userId', getUserPosts);
 router.post('/', createPost);
 router.delete('/:id', deletePost);
 

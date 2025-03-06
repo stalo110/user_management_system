@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { addressSchema, option } from '../utils/utils';
+import { addressSchema, updateAddressSchema, option } from '../utils/utils';
 import { Address } from '../models';
 import { v4 as uuidv4 } from "uuid"
 
@@ -30,6 +30,7 @@ export const createAddress = async (req: Request, res: Response): Promise<void> 
         const validateResult = addressSchema.validate(req.body, option);
         if(validateResult.error){
             res.status(400).json({Error: validateResult.error.details[0].message})
+            return;
         }
     
         const existingAddress = await Address.findOne({ where: { userId: req.body.userId } });
@@ -53,16 +54,27 @@ export const createAddress = async (req: Request, res: Response): Promise<void> 
 // PATCH /addresses/:userId - Update address
 export const updateAddress = async (req: Request, res: Response): Promise<void>  => {
     const { userId } = req.params;
-
+    const {street, city} = req.body;
+   
    try{
+    const iduuid = uuidv4();
+
+    const validateResult = updateAddressSchema.validate(req.body, option);
+    if(validateResult.error){
+        res.status(400).json({Error: validateResult.error.details[0].message})
+    }
+
     const address = await Address.findOne({ where: { userId } });
     if (!address) {
      res.status(404).json({ message: 'Address not found for user' });
      return;
     }
 
-    await address.update(req.body);
-    res.json(address);
+   const updateAddress = await address.update({
+        street,
+        city
+    });
+    res.json({msg: "update Successful", updateAddress});
    }catch(error){
     res.status(500).json({ message: 'Failed to update Address', error: error });
    }

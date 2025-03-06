@@ -28,6 +28,7 @@ const createAddress = async (req, res) => {
         const validateResult = utils_1.addressSchema.validate(req.body, utils_1.option);
         if (validateResult.error) {
             res.status(400).json({ Error: validateResult.error.details[0].message });
+            return;
         }
         const existingAddress = await models_1.Address.findOne({ where: { userId: req.body.userId } });
         if (existingAddress) {
@@ -50,14 +51,23 @@ exports.createAddress = createAddress;
 // PATCH /addresses/:userId - Update address
 const updateAddress = async (req, res) => {
     const { userId } = req.params;
+    const { street, city } = req.body;
     try {
+        const iduuid = (0, uuid_1.v4)();
+        const validateResult = utils_1.updateAddressSchema.validate(req.body, utils_1.option);
+        if (validateResult.error) {
+            res.status(400).json({ Error: validateResult.error.details[0].message });
+        }
         const address = await models_1.Address.findOne({ where: { userId } });
         if (!address) {
             res.status(404).json({ message: 'Address not found for user' });
             return;
         }
-        await address.update(req.body);
-        res.json(address);
+        const updateAddress = await address.update({
+            street,
+            city
+        });
+        res.json({ msg: "update Successful", updateAddress });
     }
     catch (error) {
         res.status(500).json({ message: 'Failed to update Address', error: error });

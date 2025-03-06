@@ -7,6 +7,7 @@ import bodyParser from "body-parser";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import db from "./config/database.config";
+import { setupAssociations } from './models'; 
 import dotenv from "dotenv";
 import UserRouter from "./routes/userRoute";
 import PostRouter from "./routes/postRoute";
@@ -40,7 +41,7 @@ app.use(helmet());
 
 const limiter = rateLimit({
   windowMs: 5 * 60 * 1000,
-  max: 10,
+  max: 20,
   message: "Too many requests from this IP, please try again later.",
 });
 
@@ -66,14 +67,29 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 
 // db connection
-db.sync().then(()=>{
+// {force: true}
+setupAssociations(); 
+db.sync({force: true}).then(()=>{
     console.log("Database Connected Successfully")
 }).catch((err)=>{
     console.log("Error Connecting to Dtabase", err)
 })
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () =>{
-  console.log(`Server is running on port ${PORT}`);
-} )
 
+const startServer = async () => {
+    try {
+        setupAssociations();  
+        await db.sync({ force: true }); 
+        console.log("Database Connected Successfully");
+
+        app.listen(PORT, () =>{
+            console.log(`Server is running on port ${PORT}`);
+          } )
+
+    } catch (err) {
+        console.error("Error connecting to database:", err);
+    }
+};
+
+startServer();

@@ -12,6 +12,7 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const helmet_1 = __importDefault(require("helmet"));
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const database_config_1 = __importDefault(require("./config/database.config"));
+const models_1 = require("./models");
 const dotenv_1 = __importDefault(require("dotenv"));
 const userRoute_1 = __importDefault(require("./routes/userRoute"));
 const postRoute_1 = __importDefault(require("./routes/postRoute"));
@@ -39,7 +40,7 @@ app.use("/address", addressRoute_1.default);
 app.use((0, helmet_1.default)());
 const limiter = (0, express_rate_limit_1.default)({
     windowMs: 5 * 60 * 1000,
-    max: 10,
+    max: 20,
     message: "Too many requests from this IP, please try again later.",
 });
 app.use(limiter);
@@ -56,12 +57,25 @@ app.use((req, res, next) => {
     next((0, http_errors_1.default)(404, "Not Found"));
 });
 // db connection
-database_config_1.default.sync().then(() => {
+// {force: true}
+(0, models_1.setupAssociations)();
+database_config_1.default.sync({ force: true }).then(() => {
     console.log("Database Connected Successfully");
 }).catch((err) => {
     console.log("Error Connecting to Dtabase", err);
 });
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+const startServer = async () => {
+    try {
+        (0, models_1.setupAssociations)();
+        await database_config_1.default.sync({ force: true });
+        console.log("Database Connected Successfully");
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
+    }
+    catch (err) {
+        console.error("Error connecting to database:", err);
+    }
+};
+startServer();

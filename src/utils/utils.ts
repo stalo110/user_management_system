@@ -12,6 +12,10 @@ export const addressSchema = Joi.object({
     city: Joi.string().required(),
     userId: Joi.string().uuid().required()
 });
+export const updateAddressSchema = Joi.object({
+    street: Joi.string().optional(),
+    city: Joi.string().optional(),
+});
 
 
 export const postSchema = Joi.object({
