@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { postSchema, option } from '../utils/utils';
-import Post from '../models/postModel';
+import { Post } from '../models';
+
 import { v4 as uuidv4 } from "uuid"
 
 export const getUserPosts = async (req: Request, res: Response) => {

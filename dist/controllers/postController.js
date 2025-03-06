@@ -1,11 +1,8 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deletePost = exports.createPost = exports.getUserPosts = void 0;
 const utils_1 = require("../utils/utils");
-const postModel_1 = __importDefault(require("../models/postModel"));
+const models_1 = require("../models");
 const uuid_1 = require("uuid");
 const getUserPosts = async (req, res) => {
     const { userId } = req.params;
@@ -14,7 +11,7 @@ const getUserPosts = async (req, res) => {
         return;
     }
     try {
-        const posts = await postModel_1.default.findAll({
+        const posts = await models_1.Post.findAll({
             where: { userId }
         });
         if (posts.length == 0) {
@@ -35,7 +32,7 @@ const createPost = async (req, res) => {
         if (validateResult.error) {
             res.status(400).json({ Error: validateResult.error.details[0].message });
         }
-        const newPost = await postModel_1.default.create({
+        const newPost = await models_1.Post.create({
             id: iduuid,
             userId,
             title,
@@ -51,7 +48,7 @@ exports.createPost = createPost;
 const deletePost = async (req, res) => {
     const { id } = req.params;
     try {
-        const post = await postModel_1.default.findByPk(id);
+        const post = await models_1.Post.findByPk(id);
         if (!post) {
             res.status(404).json({ message: 'Post not found' });
             return;

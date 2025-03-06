@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { addressSchema, option } from '../utils/utils';
-import Address from '../models/addressModel';
+import { Address } from '../models';
 import { v4 as uuidv4 } from "uuid"
 
 

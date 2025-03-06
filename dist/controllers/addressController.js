@@ -1,17 +1,14 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateAddress = exports.createAddress = exports.getAddressByUserId = void 0;
 const utils_1 = require("../utils/utils");
-const addressModel_1 = __importDefault(require("../models/addressModel"));
+const models_1 = require("../models");
 const uuid_1 = require("uuid");
 // GET /addresses/:userId
 const getAddressByUserId = async (req, res) => {
     const { userId } = req.params;
     try {
-        const address = await addressModel_1.default.findOne({ where: { userId } });
+        const address = await models_1.Address.findOne({ where: { userId } });
         if (!address) {
             res.status(404).json({ message: 'Address not found for user' });
             return;
@@ -32,12 +29,12 @@ const createAddress = async (req, res) => {
         if (validateResult.error) {
             res.status(400).json({ Error: validateResult.error.details[0].message });
         }
-        const existingAddress = await addressModel_1.default.findOne({ where: { userId: req.body.userId } });
+        const existingAddress = await models_1.Address.findOne({ where: { userId: req.body.userId } });
         if (existingAddress) {
             res.status(400).json({ message: 'User already has an address' });
             return;
         }
-        const address = await addressModel_1.default.create({
+        const address = await models_1.Address.create({
             id: iduuid,
             userId,
             street,
@@ -54,7 +51,7 @@ exports.createAddress = createAddress;
 const updateAddress = async (req, res) => {
     const { userId } = req.params;
     try {
-        const address = await addressModel_1.default.findOne({ where: { userId } });
+        const address = await models_1.Address.findOne({ where: { userId } });
         if (!address) {
             res.status(404).json({ message: 'Address not found for user' });
             return;

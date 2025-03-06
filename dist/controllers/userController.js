@@ -5,14 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createUser = exports.getUserById = exports.getUserCount = exports.getUsers = void 0;
 const utils_1 = require("../utils/utils");
-const userModel_1 = __importDefault(require("../models/userModel"));
+const models_1 = require("../models");
 const addressModel_1 = __importDefault(require("../models/addressModel"));
 const uuid_1 = require("uuid");
 const getUsers = async (req, res) => {
     const pageNumber = parseInt(req.query.pageNumber) || 0;
     const pageSize = parseInt(req.query.pageSize) || 10;
     try {
-        const { count, rows } = await userModel_1.default.findAndCountAll({
+        const { count, rows } = await models_1.User.findAndCountAll({
             offset: pageNumber * pageSize,
             limit: pageSize
         });
@@ -25,7 +25,7 @@ const getUsers = async (req, res) => {
 exports.getUsers = getUsers;
 const getUserCount = async (req, res) => {
     try {
-        const count = await userModel_1.default.count();
+        const count = await models_1.User.count();
         res.json({ msg: "User count Successful", total: count });
     }
     catch (err) {
@@ -36,7 +36,7 @@ exports.getUserCount = getUserCount;
 const getUserById = async (req, res) => {
     const { id } = req.params;
     try {
-        const user = await userModel_1.default.findByPk(id, {
+        const user = await models_1.User.findByPk(id, {
             include: [{ model: addressModel_1.default }]
         });
         if (!user) {
@@ -58,7 +58,7 @@ const createUser = async (req, res) => {
         if (validateResult.error) {
             res.status(400).json({ Error: validateResult.error.details[0].message });
         }
-        const newUser = await userModel_1.default.create({
+        const newUser = await models_1.User.create({
             id: iduuid,
             name,
             email
