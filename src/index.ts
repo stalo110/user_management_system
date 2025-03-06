@@ -7,7 +7,6 @@ import bodyParser from "body-parser";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import db from "./config/database.config";
-import { setupAssociations } from './models';
 import dotenv from "dotenv";
 import UserRouter from "./routes/userRoute";
 import PostRouter from "./routes/postRoute";
@@ -33,9 +32,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(logger("dev"));
 
-app.use("/user", UserRouter);
-app.use("/post", PostRouter);
-app.use("/address", AddressRouter);
+app.use("/admin", UserRouter);
+app.use("/events", PostRouter);
+app.use("/guest", AddressRouter);
 
 app.use(helmet());
 
@@ -67,9 +66,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 
 // db connection
-db.sync({ force: false }).then(()=>{
+db.sync().then(()=>{
     console.log("Database Connected Successfully")
-    setupAssociations();
 }).catch((err)=>{
     console.log("Error Connecting to Dtabase", err)
 })
