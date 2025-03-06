@@ -32,9 +32,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(logger("dev"));
 
-app.use("/admin", UserRouter);
-app.use("/events", PostRouter);
-app.use("/guest", AddressRouter);
+app.use("/user", UserRouter);
+app.use("/post", PostRouter);
+app.use("/address", AddressRouter);
 
 app.use(helmet());
 
